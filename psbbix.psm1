@@ -162,7 +162,13 @@ Function New-ZabbixSession {
     $BodyJSON = ConvertTo-Json $Body
 	write-verbose $BodyJSON
 	if ($PSVersionTable.PSEdition -ne "core") {
-		if (!(test-connection $IPAddress -Quiet -Count 1)) {write-host "$IPAddress is not available.`n" -f red; return}
+        if ($noSSL) {
+            $testport = 80
+        }
+        else {
+            $testport = 443
+        }
+		if (!(Test-NetConnection $IPAddress -port $testport -InformationLevel Quiet)) {write-host "$IPAddress is not available.`n" -f red; return}
 	}
     
 	if ($noSSL) {
